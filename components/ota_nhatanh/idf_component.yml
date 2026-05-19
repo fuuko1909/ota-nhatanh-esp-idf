@@ -1,0 +1,8 @@
+version: "0.1.0"
+description: ESP-IDF component ket noi ota.nhatanh.tech (MQTT TLS + OTA pull HTTPS)
+url: https://github.com/fuuko1909/ota-nhatanh-esp-idf
+license: MIT
+maintainers:
+  - Nhat Anh <admin@nhatanh.tech>
+dependencies:
+  idf: ">=5.1"
