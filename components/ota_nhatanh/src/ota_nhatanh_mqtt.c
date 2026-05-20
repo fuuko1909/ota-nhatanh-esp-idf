@@ -30,10 +30,23 @@ static void mqtt_event_handler(void *handler_args, esp_event_base_t base,
         g_state.mqtt_connected = false;
         break;
     case MQTT_EVENT_DATA:
-        if (g_state.cfg.on_mqtt_message) {
+        {
             char *t = strndup(evt->topic, evt->topic_len);
-            g_state.cfg.on_mqtt_message(t, evt->data, evt->data_len);
-            free(t);
+            char *p = strndup(evt->data, evt->data_len);
+            // Handle lenh/*
+            if (t && strstr(t, "/lenh/")) {
+                char *last = strrchr(t, '/');
+                if (last && strcmp(last + 1, "ota") == 0) {
+                    ota_nhatanh_check_ota_now();
+                } else if (last && strcmp(last + 1, "reboot") == 0) {
+                    vTaskDelay(pdMS_TO_TICKS(500));
+                    esp_restart();
+                }
+            }
+            if (g_state.cfg.on_mqtt_message) {
+                g_state.cfg.on_mqtt_message(t, evt->data, evt->data_len);
+            }
+            free(t); free(p);
         }
         break;
     case MQTT_EVENT_ERROR:

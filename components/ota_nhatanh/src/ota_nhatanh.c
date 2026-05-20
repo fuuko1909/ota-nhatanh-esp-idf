@@ -6,6 +6,7 @@
 
 #include <string.h>
 #include <stdio.h>
+#include <stdarg.h>
 #include "esp_log.h"
 #include "esp_timer.h"
 #include "freertos/FreeRTOS.h"
@@ -68,6 +69,33 @@ esp_err_t ota_nhatanh_start(void) {
     xTaskCreate(heartbeat_task, "ota_hb", 4096, NULL, 5, NULL);
     xTaskCreate(ota_check_task, "ota_chk", 8192, NULL, 5, NULL);
     return ESP_OK;
+}
+
+void ota_nhatanh_log(char level, const char *fmt, ...) {
+    char buf[256];
+    va_list ap;
+    va_start(ap, fmt);
+    vsnprintf(buf, sizeof(buf), fmt, ap);
+    va_end(ap);
+
+    printf("[%c] %s\n", level, buf);
+    if (!g_state.mqtt_connected) return;
+
+    // Escape JSON
+    char payload[512];
+    int n = snprintf(payload, sizeof(payload), "{\"l\":\"%c\",\"m\":\"", level);
+    for (const char *p = buf; *p && n < (int)sizeof(payload) - 4; p++) {
+        if (*p == '"' || *p == '\\') {
+            payload[n++] = '\\';
+            payload[n++] = *p;
+        } else if (*p >= 32) {
+            payload[n++] = *p;
+        }
+    }
+    payload[n++] = '"';
+    payload[n++] = '}';
+    payload[n] = 0;
+    ota_nhatanh_publish("log", payload, 0);
 }
 
 esp_err_t ota_nhatanh_publish(const char *sub_topic, const char *payload, int retain) {

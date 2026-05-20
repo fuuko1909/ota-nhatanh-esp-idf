@@ -43,6 +43,13 @@ esp_err_t ota_nhatanh_subscribe(const char *sub_topic);
 esp_err_t ota_nhatanh_check_ota_now(void);
 bool ota_nhatanh_is_connected(void);
 
+void ota_nhatanh_log(char level, const char *fmt, ...);
+
+#define OTA_LOGD(fmt, ...) ota_nhatanh_log('D', fmt, ##__VA_ARGS__)
+#define OTA_LOGI(fmt, ...) ota_nhatanh_log('I', fmt, ##__VA_ARGS__)
+#define OTA_LOGW(fmt, ...) ota_nhatanh_log('W', fmt, ##__VA_ARGS__)
+#define OTA_LOGE(fmt, ...) ota_nhatanh_log('E', fmt, ##__VA_ARGS__)
+
 #ifdef __cplusplus
 }
 #endif
