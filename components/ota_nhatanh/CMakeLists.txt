@@ -4,6 +4,7 @@ idf_component_register(
     "src/ota_nhatanh_wifi.c"
     "src/ota_nhatanh_mqtt.c"
     "src/ota_nhatanh_update.c"
+    "src/ota_nhatanh_entity.c"
   INCLUDE_DIRS
     "include"
   REQUIRES
