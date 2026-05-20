@@ -23,9 +23,6 @@ static void mqtt_event_handler(void *handler_args, esp_event_base_t base,
             esp_mqtt_client_publish(g_state.mqtt, topic, "online", 6, 1, 1);
             snprintf(topic, sizeof(topic), "%s/lenh/#", g_state.topic_prefix);
             esp_mqtt_client_subscribe(g_state.mqtt, topic, 1);
-            snprintf(topic, sizeof(topic), "%s/entity/+/set", g_state.topic_prefix);
-            esp_mqtt_client_subscribe(g_state.mqtt, topic, 1);
-            _ota_publish_all_entity_configs();
         }
         break;
     case MQTT_EVENT_DISCONNECTED:
@@ -43,19 +40,6 @@ static void mqtt_event_handler(void *handler_args, esp_event_base_t base,
                 } else if (last && strcmp(last + 1, "reboot") == 0) {
                     vTaskDelay(pdMS_TO_TICKS(500));
                     esp_restart();
-                }
-            } else if (t && strstr(t, "/entity/") && p) {
-                // thiet-bi/<id>/entity/<key>/set
-                char *s = strstr(t, "/entity/") + 8;
-                char *e = strstr(s, "/set");
-                if (e) {
-                    char key[32];
-                    int n = e - s;
-                    if (n < (int)sizeof(key)) {
-                        memcpy(key, s, n);
-                        key[n] = 0;
-                        _ota_handle_entity_set(key, p);
-                    }
                 }
             }
             if (g_state.cfg.on_mqtt_message) {
