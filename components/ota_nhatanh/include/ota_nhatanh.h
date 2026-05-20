@@ -58,25 +58,6 @@ void ota_nhatanh_printf(const char *fmt, ...);
 #define OTA_PRINTLN(s)  ota_nhatanh_println(s)
 #define OTA_PRINTF(...) ota_nhatanh_printf(__VA_ARGS__)
 
-// Entity API (MQTT discovery)
-typedef void (*ota_switch_cb_t)(bool on);
-typedef void (*ota_number_cb_t)(float value);
-typedef void (*ota_button_cb_t)(void);
-typedef void (*ota_text_cb_t)(const char *value);
-
-esp_err_t ota_nhatanh_add_sensor(const char *key, const char *name, const char *unit);
-esp_err_t ota_nhatanh_add_binary_sensor(const char *key, const char *name);
-esp_err_t ota_nhatanh_add_switch(const char *key, const char *name, ota_switch_cb_t cb);
-esp_err_t ota_nhatanh_add_number(const char *key, const char *name, float mn, float mx, float step, ota_number_cb_t cb);
-esp_err_t ota_nhatanh_add_button(const char *key, const char *name, ota_button_cb_t cb);
-esp_err_t ota_nhatanh_add_text(const char *key, const char *name);
-
-esp_err_t ota_nhatanh_update_sensor(const char *key, float value);
-esp_err_t ota_nhatanh_update_binary_sensor(const char *key, bool on);
-esp_err_t ota_nhatanh_update_switch(const char *key, bool on);
-esp_err_t ota_nhatanh_update_number(const char *key, float value);
-esp_err_t ota_nhatanh_update_text(const char *key, const char *value);
-
 #ifdef __cplusplus
 }
 #endif
