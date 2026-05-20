@@ -98,6 +98,42 @@ void ota_nhatanh_log(char level, const char *fmt, ...) {
     ota_nhatanh_publish("log", payload, 0);
 }
 
+// ─────────── Live Serial stream ───────────
+static char _raw_buf[256];
+static int _raw_idx = 0;
+
+static void _flush_raw(void) {
+    if (_raw_idx == 0) return;
+    _raw_buf[_raw_idx] = 0;
+    if (g_state.mqtt_connected) {
+        ota_nhatanh_publish("log/raw", _raw_buf, 0);
+    }
+    _raw_idx = 0;
+}
+
+void ota_nhatanh_print(const char *s) {
+    printf("%s", s);
+    for (; *s; s++) {
+        if (*s == '\n' || _raw_idx >= 255) { _flush_raw(); continue; }
+        if (*s == '\r') continue;
+        _raw_buf[_raw_idx++] = *s;
+    }
+}
+
+void ota_nhatanh_println(const char *s) {
+    ota_nhatanh_print(s);
+    _flush_raw();
+}
+
+void ota_nhatanh_printf(const char *fmt, ...) {
+    char buf[256];
+    va_list ap; va_start(ap, fmt);
+    vsnprintf(buf, sizeof(buf), fmt, ap);
+    va_end(ap);
+    ota_nhatanh_print(buf);
+}
+
+
 esp_err_t ota_nhatanh_publish(const char *sub_topic, const char *payload, int retain) {
     if (!g_state.mqtt) return ESP_FAIL;
     char topic[160];

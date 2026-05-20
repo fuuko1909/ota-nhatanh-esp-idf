@@ -50,6 +50,14 @@ void ota_nhatanh_log(char level, const char *fmt, ...);
 #define OTA_LOGW(fmt, ...) ota_nhatanh_log('W', fmt, ##__VA_ARGS__)
 #define OTA_LOGE(fmt, ...) ota_nhatanh_log('E', fmt, ##__VA_ARGS__)
 
+void ota_nhatanh_print(const char *s);
+void ota_nhatanh_println(const char *s);
+void ota_nhatanh_printf(const char *fmt, ...);
+
+#define OTA_PRINT(s)    ota_nhatanh_print(s)
+#define OTA_PRINTLN(s)  ota_nhatanh_println(s)
+#define OTA_PRINTF(...) ota_nhatanh_printf(__VA_ARGS__)
+
 // Entity API (MQTT discovery)
 typedef void (*ota_switch_cb_t)(bool on);
 typedef void (*ota_number_cb_t)(float value);
